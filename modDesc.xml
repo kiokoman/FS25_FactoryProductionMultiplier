@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="94">
+    <author>kiokoman</author>
+    <version>1.0.0.0</version>
+    <title>
+        <en>Factory Production Modifier</en>
+        <de>Fabrikproduktion-Modifikator</de>
+        <it>Modificatore Produzione Fabbriche</it>
+    </title>
+
+    <description>
+<en><![CDATA[This mod allow you to modify production rates for factories, multiplier can be selected from the menu settings, you can also enable or disable multiplier for specific production.
+GitHub-Link: https://github.com/kiokoman/FS25_FactoryProductionMultiplier
+]]>
+</en>
+
+<de><![CDATA[Mit diesem Mod können Sie die Produktionsraten für Fabriken ändern. Der Multiplikator kann in den Menüeinstellungen ausgewählt werden. Sie können den Multiplikator auch für eine bestimmte Produktion aktivieren oder deaktivieren.
+GitHub-Link: https://github.com/kiokoman/FS25_FactoryProductionMultiplier
+]]>
+</de>
+
+<it><![CDATA[Questa mod ti consente di modificare i tassi di produzione per le fabbriche, il moltiplicatore può essere selezionato dalle impostazioni del menu, puoi anche abilitare o disabilitare il moltiplicatore per una produzione specifica.
+GitHub-Link: https://github.com/kiokoman/FS25_FactoryProductionMultiplier
+]]>
+</it>
+
+<fr><![CDATA[Si vous consentez à modifier les tâches de production du fabricant, le multiplicateur peut être sélectionné parmi les options du menu, il peut également activer ou désactiver le multiplicateur pour une production spécifique.
+GitHub-Link: https://github.com/kiokoman/FS25_FactoryProductionMultiplier
+]]>
+</fr>
+    </description>
+
+    <iconFilename>icon_productionmultiplier.dds</iconFilename>
+    <multiplayer supported="true"/>
+    
+    <extraSourceFiles>
+        <sourceFile filename="scripts/FactoryProductionModifier.lua"/>
+    </extraSourceFiles>
+    <l10n filenamePrefix="languages/l10n"/>
+</modDesc>
