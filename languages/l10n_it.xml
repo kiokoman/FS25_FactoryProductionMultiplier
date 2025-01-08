@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <texts>
+	<text name="factoryProduction_settings" text="Impostazioni Produzione"/>
+	<text name="factoryProduction_multiplier_tooltip" text="Modifica il moltiplicatore di produzione delle fabbriche"/>
+	<text name="factoryProduction_multiplier" text="Moltiplicatore di Produzione"/>
+	<text name="factoryProduction_prod" text="Elenco Produzioni"/>
+	<text name="production_tooltip" text="Abilita/Disabilita moltiplicatore per"/>
+
+	<!-- Production Names -->
+        <text name="production_cheese" text="Formaggio"/>
+        <text name="production_butter_buffaloMilk" text="Burro di bufala"/>
+        <text name="production_butter_milk" text="Burro"/>
+        <text name="production_butter_goatMilk" text="Burro di capra"/>
+        <text name="production_goatcheese" text="Formaggio di capra"/>
+        <text name="production_buffalomozzarella" text="Mozzarella di bufala"/>
+        <text name="production_chocolate" text="Cioccolato"/>
+        <text name="production_milkBottled" text="Latte in bottiglia"/>
+        <text name="production_goatmilkBottled" text="Latte di capra in bottiglia"/>
+        <text name="production_buffalomilkBottled" text="Latte di bufala in bottiglia"/>
+    	<text name="production_flourMaize text="Farina di mais"/>
+  	<text name="production_flourWheat text="Farina di grano"/>
+  	<text name="production_flourSunflower text="Farina di girasole"/>
+  	<text name="production_flourCanola text="Farina di colza"/>
+  	<text name="production_flourSoybean text="Farina di soia"/>
+  	<text name="production_flourBarley text="Farina d'orzo"/>
+   	<text name="production_flourOat text="Farina d'avena"/>
+    	<text name="production_flourSorghum text="Farina di sorgo"/>
+    	<text name="production_flourRiceLongGrain text="Farina di riso a grana lunga"/>
+    	<text name="production_flourRice text="Farina di riso"/>
+    	<text name="production_sugarbeet_sugar text="Zucchero da barbabietola"/>
+    	<text name="production_sugarbeetCut_sugar text="Zucchero da barbabietola tagliata"/>
+    	<text name="production_sugarcane_sugar text="Zucchero di canna"/>
+    	<text name="production_bread text="Pane"/>
+    	<text name="production_cake text="Dolce"/>
+    	<text name="production_breadRiceFlour text="Pane alla farina di riso"/>
+    	<text name="production_cakeRiceFlour text="Dolce alla farina di riso"/>
+    	<text name="production_furnitureWood text="Legno per mobilio"/>
+    	<text name="production_furnitureBoards text="Pannelli per mobilio"/>
+    	<text name="production_furniturePlanks text="Assi per mobilio"/>
+    	<text name="production_cereal_raisins text=""/>
+    	<text name="production_cereal_chocolate text=""/>
+    	<text name="production_cereal_riceLongGrain text=""/>
+    	<text name="production_cereal_rice text=""/>
+    	<text name="production_raisins text=""/>
+    	<text name="production_grapejuice text=""/>
+    	<text name="production_grapePallet text=""/>
+    	<text name="production_biogas text=""/>
+    	<text name="production_biogasLiquidManure text=""/>
+    	<text name="production_biogasManure text=""/>
+    	<text name="production_biogasSugarbeetCut text=""/>
+    	<text name="production_sunflower_oil text=""/>
+    	<text name="production_canola_oil text=""/>
+    	<text name="production_olive_oil text=""/>
+    	<text name="production_rice_oil_longGrainRice text=""/>
+    	<text name="production_rice_oil_rice text=""/>
+    	<text name="production_cartonRoll text=""/>
+    	<text name="production_olive_oil text=""/>
+    	<text name="production_boards text="Tavole"/>
+    	<text name="production_planks text="Assi"/>
+    	<text name="production_woodBeam text=""/>
+    	<text name="production_prefabWall text="Parete Prefabbricato"/>
+    	<text name="production_fabric_wool text="Lana"/>
+    	<text name="production_fabric_cotton text="Cotone"/>
+    	<text name="production_clothes text="Vestiario"/>
+    	<text name="production_preservedFoodCarrots text=""/>
+    	<text name="production_preservedFoodParsnip text=""/>
+    	<text name="production_preservedFoodBeetRoot text=""/>
+    	<text name="production_preservedFoodCannedPea text=""/>
+    	<text name="production_preservedFoodSpinachBags text=""/>
+    	<text name="production_preservedFoodRiceBags text=""/>
+    	<text name="production_preservedFoodRiceBoxes text=""/>
+    	<text name="production_preservedFoodjarredGreenbean text=""/>
+    	<text name="production_preservedFoodFermentedNapaCabbage text=""/>
+    	<text name="production_noodleSoupFlour text=""/>
+    	<text name="production_noodleSoupRiceFlour text=""/>
+    	<text name="production_riceRollsRiceLongGrain text=""/>
+    	<text name="production_riceRollsRice text=""/>
+    	<text name="production_ropePalletCotton text=""/>
+    	<text name="production_ropePalletWool text=""/>
+    	<text name="production_cementBags text=""/>
+    	<text name="production_roofPlate text=""/>
+    	<text name="production_cementBrick text=""/>
+    	<text name="production_potatoChips_sunflowerOil text=""/>
+    	<text name="production_potatoChips_canolaOil text=""/>
+    	<text name="production_potatoChips_oliveOil text=""/>
+    	<text name="production_soupCansMixed text=""/>
+    	<text name="production_soupCansCarrots text=""/>
+    	<text name="production_soupCansParsnip text=""/>
+    	<text name="production_soupCansBeetroot text=""/>
+    	<text name="production_soupCansPotato text=""/>
+    	<text name="production_barrelPlanks text=""/>
+    	<text name="production_bucketPlanks text=""/>
+    	<text name="production_bathtubPlanks text=""/>
+    	<text name="production_barrelBoards text=""/>
+    	<text name="production_bucketBoards text=""/>
+    	<text name="production_bathtubBoards text=""/>
+    </texts>
+</l10n>
