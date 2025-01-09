@@ -38,62 +38,61 @@
     	<text name="production_furnitureWood text="Legno per mobilio"/>
     	<text name="production_furnitureBoards text="Pannelli per mobilio"/>
     	<text name="production_furniturePlanks text="Assi per mobilio"/>
-    	<text name="production_cereal_raisins text=""/>
-    	<text name="production_cereal_chocolate text=""/>
-    	<text name="production_cereal_riceLongGrain text=""/>
-    	<text name="production_cereal_rice text=""/>
-    	<text name="production_raisins text=""/>
-    	<text name="production_grapejuice text=""/>
-    	<text name="production_grapePallet text=""/>
-    	<text name="production_biogas text=""/>
-    	<text name="production_biogasLiquidManure text=""/>
-    	<text name="production_biogasManure text=""/>
-    	<text name="production_biogasSugarbeetCut text=""/>
-    	<text name="production_sunflower_oil text=""/>
-    	<text name="production_canola_oil text=""/>
-    	<text name="production_olive_oil text=""/>
-    	<text name="production_rice_oil_longGrainRice text=""/>
-    	<text name="production_rice_oil_rice text=""/>
-    	<text name="production_cartonRoll text=""/>
-    	<text name="production_olive_oil text=""/>
+        <text name="production_cereal_raisins" text="Cereali con uvetta"/>
+        <text name="production_cereal_chocolate" text="Cereali con cioccolato"/>
+	<text name="production_cereal_riceLongGrain" text="Cereali con riso a grana lunga"/>
+	<text name="production_cereal_rice" text="Cereali con riso"/>
+	<text name="production_raisins" text="Uvetta"/>
+	<text name="production_grapejuice" text="Succo d'uva"/>
+	<text name="production_grapePallet" text="Cassetta d'uva"/>
+	<text name="production_biogas" text="Biogas"/>
+	<text name="production_biogasLiquidManure" text="Biogas da liquame"/>
+	<text name="production_biogasManure" text="Biogas da letame"/>
+	<text name="production_biogasSugarbeetCut" text="Biogas da barbabietola tagliata"/>
+	<text name="production_sunflower_oil" text="Olio di girasole"/>
+	<text name="production_canola_oil" text="Olio di colza"/>
+	<text name="production_olive_oil" text="Olio d'oliva"/>
+	<text name="production_rice_oil_longGrainRice" text="Olio di riso a grana lunga"/>
+	<text name="production_rice_oil_rice" text="Olio di riso"/>
+	<text name="production_cartonRoll" text="Rotolo di cartone"/>
     	<text name="production_boards text="Tavole"/>
     	<text name="production_planks text="Assi"/>
-    	<text name="production_woodBeam text=""/>
+    	<text name="production_woodBeam" text="Trave di legno"/>
     	<text name="production_prefabWall text="Parete Prefabbricato"/>
     	<text name="production_fabric_wool text="Lana"/>
     	<text name="production_fabric_cotton text="Cotone"/>
     	<text name="production_clothes text="Vestiario"/>
-    	<text name="production_preservedFoodCarrots text=""/>
-    	<text name="production_preservedFoodParsnip text=""/>
-    	<text name="production_preservedFoodBeetRoot text=""/>
-    	<text name="production_preservedFoodCannedPea text=""/>
-    	<text name="production_preservedFoodSpinachBags text=""/>
-    	<text name="production_preservedFoodRiceBags text=""/>
-    	<text name="production_preservedFoodRiceBoxes text=""/>
-    	<text name="production_preservedFoodjarredGreenbean text=""/>
-    	<text name="production_preservedFoodFermentedNapaCabbage text=""/>
-    	<text name="production_noodleSoupFlour text=""/>
-    	<text name="production_noodleSoupRiceFlour text=""/>
-    	<text name="production_riceRollsRiceLongGrain text=""/>
-    	<text name="production_riceRollsRice text=""/>
-    	<text name="production_ropePalletCotton text=""/>
-    	<text name="production_ropePalletWool text=""/>
-    	<text name="production_cementBags text=""/>
-    	<text name="production_roofPlate text=""/>
-    	<text name="production_cementBrick text=""/>
-    	<text name="production_potatoChips_sunflowerOil text=""/>
-    	<text name="production_potatoChips_canolaOil text=""/>
-    	<text name="production_potatoChips_oliveOil text=""/>
-    	<text name="production_soupCansMixed text=""/>
-    	<text name="production_soupCansCarrots text=""/>
-    	<text name="production_soupCansParsnip text=""/>
-    	<text name="production_soupCansBeetroot text=""/>
-    	<text name="production_soupCansPotato text=""/>
-    	<text name="production_barrelPlanks text=""/>
-    	<text name="production_bucketPlanks text=""/>
-    	<text name="production_bathtubPlanks text=""/>
-    	<text name="production_barrelBoards text=""/>
-    	<text name="production_bucketBoards text=""/>
-    	<text name="production_bathtubBoards text=""/>
+	<text name="production_preservedFoodCarrots" text="Carote conservate"/>
+	<text name="production_preservedFoodParsnip" text="Pastinaca conservata"/>
+	<text name="production_preservedFoodBeetRoot" text="Barbabietola conservata"/>
+	<text name="production_preservedFoodCannedPea" text="Piselli in scatola"/>
+	<text name="production_preservedFoodSpinachBags" text="Spinaci in sacchetti"/>
+	<text name="production_preservedFoodRiceBags" text="Riso in sacchetti"/>
+	<text name="production_preservedFoodRiceBoxes" text="Riso in scatola"/>
+	<text name="production_preservedFoodjarredGreenbean" text="Fagiolini in barattolo"/>
+	<text name="production_preservedFoodFermentedNapaCabbage" text="Cavolo Napa fermentato"/>
+	<text name="production_noodleSoupFlour" text="Zuppa di noodles con farina"/>
+	<text name="production_noodleSoupRiceFlour" text="Zuppa di noodles con farina di riso"/>
+	<text name="production_riceRollsRiceLongGrain" text="Involtini di riso a grana lunga"/>
+	<text name="production_riceRollsRice" text="Involtini di riso"/>
+	<text name="production_ropePalletCotton" text="Pallet corda in cotone"/>
+	<text name="production_ropePalletWool" text="Pallet corda in lana"/>
+	<text name="production_cementBags" text="Sacchi di cemento"/>
+	<text name="production_roofPlate" text="Lastre per tetto"/>
+	<text name="production_cementBrick" text="Mattoni di cemento"/>
+	<text name="production_potatoChips_sunflowerOil" text="Patatine fritte con olio di girasole"/>
+	<text name="production_potatoChips_canolaOil" text="Patatine fritte con olio di colza"/>
+	<text name="production_potatoChips_oliveOil" text="Patatine fritte con olio d'oliva"/>
+	<text name="production_soupCansMixed" text="Zuppa in scatola mista"/>
+	<text name="production_soupCansCarrots" text="Zuppa in scatola di carote"/>
+	<text name="production_soupCansParsnip" text="Zuppa in scatola di pastinaca"/>
+	<text name="production_soupCansBeetroot" text="Zuppa in scatola di barbabietola"/>
+	<text name="production_soupCansPotato" text="Zuppa in scatola di patate"/>
+	<text name="production_barrelPlanks" text="Botti con assi"/>
+	<text name="production_bucketPlanks" text="Secchi con assi"/>
+	<text name="production_bathtubPlanks" text="Vasche da bagno con assi"/>
+	<text name="production_barrelBoards" text="Botti con tavole"/>
+	<text name="production_bucketBoards" text="Secchi con tavole"/>
+	<text name="production_bathtubBoards" text="Vasche da bagno con tavole"/>
     </texts>
 </l10n>
