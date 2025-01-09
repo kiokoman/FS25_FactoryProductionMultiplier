@@ -96,9 +96,7 @@ local ProductionsIds = {
     {id = "bathtubPlanks", name = "production_bathtubPlanks"},
     {id = "barrelBoards", name = "production_barrelBoards"},
     {id = "bucketBoards", name = "production_bucketBoards"},
-    {id = "bathtubBoards", name = "production_bathtubBoards"},
-
-
+    {id = "bathtubBoards", name = "production_bathtubBoards"}
 }
 
 FactoryProductionModifier = {
