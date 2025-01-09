@@ -238,15 +238,6 @@ function FactoryProductionModifier:isProductionId(prodId)
     return false
 end
 
---function FactoryProductionModifier:isProductionId(prodId)
---    for _, prod in ipairs(ProductionsIds) do
---       if prod.id == prodId then
---            return true
---       end
---    end
---    return false
---end
-
 function FactoryProductionModifier:update(dt)
     if not self.isLoaded then
         self.loadTimer = self.loadTimer + dt
