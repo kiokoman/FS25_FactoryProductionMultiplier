@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<l10n>
+    <texts>
+      	<text name="factoryProduction_settings" text="Produktionseinstellungen"/>
+	      <text name="factoryProduction_multiplier_tooltip" text="Ändern Sie den Produktionsmultiplikator der Fabriken"/>
+	      <text name="factoryProduction_multiplier" text="Produktionsmultiplikator"/>
+	      <text name="factoryProduction_prod" text="Produktionsliste"/>
+	      <text name="production_tooltip" text="Multiplikator aktivieren/deaktivieren für"/>
+      
+      <!-- Production Names -->
+        <text name="production_cheese" text="Käse"/>
+        <text name="production_butter_buffaloMilk" text="Büffelmilchbutter"/>
+        <text name="production_butter_milk" text="Butter"/>
+        <text name="production_butter_goatMilk" text="Ziegenmilchbutter"/>
+        <text name="production_goatcheese" text="Ziegenkäse"/>
+        <text name="production_buffalomozzarella" text="Büffelmozzarella"/>
+        <text name="production_chocolate" text="Schokolade"/>
+        <text name="production_milkBottled" text="Milch in Flaschen"/>
+        <text name="production_goatmilkBottled" text="Ziegenmilch in Flaschen"/>
+        <text name="production_buffalomilkBottled" text="Büffelmilch in Flaschen"/>
+        <text name="production_flourMaize" text="Maismehl"/>
+        <text name="production_flourWheat" text="Weizenmehl"/>
+        <text name="production_flourSunflower" text="Sonnenblumenmehl"/>
+        <text name="production_flourCanola" text="Rapsmehl"/>
+        <text name="production_flourSoybean" text="Sojamehl"/>
+        <text name="production_flourBarley" text="Gerstenmehl"/>
+        <text name="production_flourOat" text="Hafermehl"/>
+        <text name="production_flourSorghum" text="Sorghummehl"/>
+        <text name="production_flourRiceLongGrain" text="Langkornreis-Mehl"/>
+        <text name="production_flourRice" text="Reismehl"/>
+        <text name="production_sugarbeet_sugar" text="Zuckerrübenzucker"/>
+        <text name="production_sugarbeetCut_sugar" text="Geschnittener Zuckerrübenzucker"/>
+        <text name="production_sugarcane_sugar" text="Rohrzucker"/>
+        <text name="production_bread" text="Brot"/>
+        <text name="production_cake" text="Kuchen"/>
+        <text name="production_breadRiceFlour" text="Brot aus Reismehl"/>
+        <text name="production_cakeRiceFlour" text="Kuchen aus Reismehl"/>
+        <text name="production_furnitureWood" text="Holzmöbel"/>
+        <text name="production_furnitureBoards" text="Möbel aus Brettern"/>
+        <text name="production_furniturePlanks" text="Möbel aus Bohlen"/>
+        <text name="production_cereal_raisins" text="Müsli mit Rosinen"/>
+        <text name="production_cereal_chocolate" text="Müsli mit Schokolade"/>
+        <text name="production_cereal_riceLongGrain" text="Müsli mit Langkornreis"/>
+        <text name="production_cereal_rice" text="Müsli mit Reis"/>
+        <text name="production_raisins" text="Rosinen"/>
+        <text name="production_grapejuice" text="Traubensaft"/>
+        <text name="production_grapePallet" text="Kiste mit Trauben"/>
+        <text name="production_biogas" text="Biogas"/>
+        <text name="production_biogasLiquidManure" text="Biogas aus Gülle"/>
+        <text name="production_biogasManure" text="Biogas aus Mist"/>
+        <text name="production_biogasSugarbeetCut" text="Biogas aus geschnittenen Zuckerrüben"/>
+        <text name="production_sunflower_oil" text="Sonnenblumenöl"/>
+        <text name="production_canola_oil" text="Rapsöl"/>
+        <text name="production_olive_oil" text="Olivenöl"/>
+        <text name="production_rice_oil_longGrainRice" text="Langkornreisöl"/>
+        <text name="production_rice_oil_rice" text="Reisöl"/>
+        <text name="production_cartonRoll" text="Kartonrolle"/>
+        <text name="production_boards" text="Bretter"/>
+        <text name="production_planks" text="Bohlen"/>
+        <text name="production_woodBeam" text="Holzbalken"/>
+        <text name="production_prefabWall" text="Fertigbauwand"/>
+        <text name="production_fabric_wool" text="Wolle"/>
+        <text name="production_fabric_cotton" text="Baumwolle"/>
+        <text name="production_clothes" text="Kleidung"/>
+        <text name="production_preservedFoodCarrots" text="Eingelegte Karotten"/>
+        <text name="production_preservedFoodParsnip" text="Eingelegter Pastinak"/>
+        <text name="production_preservedFoodBeetRoot" text="Eingelegte Rote Beete"/>
+        <text name="production_preservedFoodCannedPea" text="Erbsen in Dosen"/>
+        <text name="production_preservedFoodSpinachBags" text="Spinat in Beuteln"/>
+        <text name="production_preservedFoodRiceBags" text="Reis in Beuteln"/>
+        <text name="production_preservedFoodRiceBoxes" text="Reis in Boxen"/>
+        <text name="production_preservedFoodjarredGreenbean" text="Grüne Bohnen im Glas"/>
+        <text name="production_preservedFoodFermentedNapaCabbage" text="Fermentierter Napa-Kohl"/>
+        <text name="production_noodleSoupFlour" text="Nudelsuppe mit Mehl"/>
+        <text name="production_noodleSoupRiceFlour" text="Nudelsuppe mit Reismehl"/>
+        <text name="production_riceRollsRiceLongGrain" text="Langkornreisrollen"/>
+        <text name="production_riceRollsRice" text="Reisrollen"/>
+        <text name="production_ropePalletCotton" text="Baumwollseil-Palette"/>
+        <text name="production_ropePalletWool" text="Wollseil-Palette"/>
+        <text name="production_cementBags" text="Zementsäcke"/>
+        <text name="production_roofPlate" text="Dachplatten"/>
+        <text name="production_cementBrick" text="Zementziegel"/>
+        <text name="production_potatoChips_sunflowerOil" text="Kartoffelchips mit Sonnenblumenöl"/>
+        <text name="production_potatoChips_canolaOil" text="Kartoffelchips mit Rapsöl"/>
+        <text name="production_potatoChips_oliveOil" text="Kartoffelchips mit Olivenöl"/>
+        <text name="production_soupCansMixed" text="Gemischte Dosensuppe"/>
+        <text name="production_soupCansCarrots" text="Karottensuppe in Dosen"/>
+        <text name="production_soupCansParsnip" text="Pastinaksuppe in Dosen"/>
+        <text name="production_soupCansBeetroot" text="Rote Beete-Suppe in Dosen"/>
+        <text name="production_soupCansPotato" text="Kartoffelsuppe in Dosen"/>
+        <text name="production_barrelPlanks" text="Fässer aus Bohlen"/>
+        <text name="production_bucketPlanks" text="Eimer aus Bohlen"/>
+        <text name="production_bathtubPlanks" text="Badewannen aus Bohlen"/>
+        <text name="production_barrelBoards" text="Fässer aus Brettern"/>
+        <text name="production_bucketBoards" text="Eimer aus Brettern"/>
+        <text name="production_bathtubBoards" text="Badewannen aus Brettern"/>
+    </texts>
+</l10n>
