@@ -18,29 +18,29 @@
         <text name="production_milkBottled" text="Latte in bottiglia"/>
         <text name="production_goatmilkBottled" text="Latte di capra in bottiglia"/>
         <text name="production_buffalomilkBottled" text="Latte di bufala in bottiglia"/>
-    	<text name="production_flourMaize text="Farina di mais"/>
-  	<text name="production_flourWheat text="Farina di grano"/>
-  	<text name="production_flourSunflower text="Farina di girasole"/>
-  	<text name="production_flourCanola text="Farina di colza"/>
-  	<text name="production_flourSoybean text="Farina di soia"/>
-  	<text name="production_flourBarley text="Farina d'orzo"/>
-   	<text name="production_flourOat text="Farina d'avena"/>
-    	<text name="production_flourSorghum text="Farina di sorgo"/>
-    	<text name="production_flourRiceLongGrain text="Farina di riso a grana lunga"/>
-    	<text name="production_flourRice text="Farina di riso"/>
-    	<text name="production_sugarbeet_sugar text="Zucchero da barbabietola"/>
-    	<text name="production_sugarbeetCut_sugar text="Zucchero da barbabietola tagliata"/>
-    	<text name="production_sugarcane_sugar text="Zucchero di canna"/>
-    	<text name="production_bread text="Pane"/>
-    	<text name="production_cake text="Dolce"/>
-    	<text name="production_breadRiceFlour text="Pane alla farina di riso"/>
-    	<text name="production_cakeRiceFlour text="Dolce alla farina di riso"/>
-    	<text name="production_furnitureWood text="Legno per mobilio"/>
-    	<text name="production_furnitureBoards text="Pannelli per mobilio"/>
-    	<text name="production_furniturePlanks text="Assi per mobilio"/>
-        <text name="production_cereal_raisins" text="Cereali con uvetta"/>
-        <text name="production_cereal_chocolate" text="Cereali con cioccolato"/>
-	<text name="production_cereal_riceLongGrain" text="Cereali con riso a grana lunga"/>
+    	<text name="production_flourMaize" text="Farina di mais"/>
+    	<text name="production_flourWheat" text="Farina di grano"/>
+    	<text name="production_flourSunflower" text="Farina di girasole"/>
+    	<text name="production_flourCanola" text="Farina di colza"/>
+    	<text name="production_flourSoybean" text="Farina di soia"/>
+    	<text name="production_flourBarley" text="Farina d'orzo"/>
+    	<text name="production_flourOat" text="Farina d'avena"/>
+    	<text name="production_flourSorghum" text="Farina di sorgo"/>
+    	<text name="production_flourRiceLongGrain" text="Farina di riso a grana lunga"/>
+    	<text name="production_flourRice" text="Farina di riso"/>
+    	<text name="production_sugarbeet_sugar" text="Zucchero da barbabietola"/>
+    	<text name="production_sugarbeetCut_sugar" text="Zucchero da barbabietola tagliata"/>
+    	<text name="production_sugarcane_sugar" text="Zucchero di canna"/>
+    	<text name="production_bread" text="Pane"/>
+    	<text name="production_cake" text="Dolce"/>
+    	<text name="production_breadRiceFlour" text="Pane alla farina di riso"/>
+    	<text name="production_cakeRiceFlour" text="Dolce alla farina di riso"/>
+    	<text name="production_furnitureWood" text="Legno per mobilio"/>
+    	<text name="production_furnitureBoards" text="Pannelli per mobilio"/>
+    	<text name="production_furniturePlanks" text="Assi per mobilio"/>
+	<text name="production_cereal_raisins" text="Cereali con uvetta"/>
+	<text name="production_cereal_chocolate" text="Cereali con cioccolato"/>
+    	<text name="production_cereal_riceLongGrain" text="Cereali con riso a grana lunga"/>
 	<text name="production_cereal_rice" text="Cereali con riso"/>
 	<text name="production_raisins" text="Uvetta"/>
 	<text name="production_grapejuice" text="Succo d'uva"/>
@@ -55,13 +55,13 @@
 	<text name="production_rice_oil_longGrainRice" text="Olio di riso a grana lunga"/>
 	<text name="production_rice_oil_rice" text="Olio di riso"/>
 	<text name="production_cartonRoll" text="Rotolo di cartone"/>
-    	<text name="production_boards text="Tavole"/>
-    	<text name="production_planks text="Assi"/>
+    	<text name="production_boards" text="Tavole"/>
+    	<text name="production_planks" text="Assi"/>
     	<text name="production_woodBeam" text="Trave di legno"/>
-    	<text name="production_prefabWall text="Parete Prefabbricato"/>
-    	<text name="production_fabric_wool text="Lana"/>
-    	<text name="production_fabric_cotton text="Cotone"/>
-    	<text name="production_clothes text="Vestiario"/>
+    	<text name="production_prefabWall" text="Parete Prefabbricato"/>
+    	<text name="production_fabric_wool" text="Lana"/>
+    	<text name="production_fabric_cotton" text="Cotone"/>
+    	<text name="production_clothes" text="Vestiario"/>
 	<text name="production_preservedFoodCarrots" text="Carote conservate"/>
 	<text name="production_preservedFoodParsnip" text="Pastinaca conservata"/>
 	<text name="production_preservedFoodBeetRoot" text="Barbabietola conservata"/>
