@@ -8,6 +8,7 @@ FactoryProductionModifier = {}
 FactoryProductionModifier.path = g_currentModDirectory
 local FactoryProductionModifier_mt = Class(FactoryProductionModifier)
 
+
 local ProductionsIds = {
     {id = "cheese", name = "production_cheese"},
     {id = "butter_buffaloMilk", name = "production_butter_buffaloMilk"},
@@ -139,13 +140,102 @@ function FactoryProductionModifier:loadConfig()
     end
 end
 
+function FactoryProductionModifier:getCurrentMonth()    -- Verifica se g_currentMission.environment esiste
+    if g_currentMission and g_currentMission.environment then
+        local currentSeason = g_currentMission.environment.currentSeason
+        local dayInSeason = g_currentMission.environment.currentDayInSeason
+        local daysPerPeriod = g_currentMission.environment.daysPerPeriod  -- parametro per i giorni per periodo
+        
+        -- Calcola il mese in base alla stagione e al numero di giorni per periodo
+        local month
+        
+        -- Calcola quale mese corrisponde
+        local monthIndex = math.ceil(dayInSeason / daysPerPeriod)  -- Dividi i giorni in base alla durata del periodo
+        
+        -- Determina il mese sulla base della stagione
+        if currentSeason == 1 then
+            -- Primavera (Marzo, Aprile, Maggio)
+            if monthIndex == 1 then
+                month = 3 -- Marzo
+            elseif monthIndex == 2 then
+                month = 4 -- Aprile
+            elseif monthIndex == 3 then
+                month = 5 -- Maggio
+            end
+        elseif currentSeason == 2 then
+            -- Estate (Giugno, Luglio, Agosto)
+            if monthIndex == 1 then
+                month = 6 -- Giugno
+            elseif monthIndex == 2 then
+                month = 7 -- Luglio
+            elseif monthIndex == 3 then
+                month = 8 -- Agosto
+            end
+        elseif currentSeason == 3 then
+            -- Autunno (Settembre, Ottobre, Novembre)
+            if monthIndex == 1 then
+                month = 9 -- Settembre
+            elseif monthIndex == 2 then
+                month = 10 -- Ottobre
+            elseif monthIndex == 3 then
+                month = 11 -- Novembre
+            end
+        elseif currentSeason == 4 then
+            -- Inverno (Dicembre, Gennaio, Febbraio)
+            if monthIndex == 1 then
+                month = 12 -- Dicembre
+            elseif monthIndex == 2 then
+                month = 1 -- Gennaio
+            elseif monthIndex == 3 then
+                month = 2 -- Febbraio
+            end
+        end
+        return month
+    else
+        print("g_currentMission.environment non esiste!")
+        return nil
+    end
+end
+
 function FactoryProductionModifier:updateProductionCycles(production)
+    -- Debug: Stampa il mese corrente
+    local currentMonth = self:getCurrentMonth()
+    print(string.format("FactoryProductionModifier - Current Month: %d", currentMonth))
+
     -- Verifica se la produzione è abilitata
     if not self:isProductionId(production.id) then
-        return -- Se disabilitata, non applicare la moltiplicazione
+        print(string.format("FactoryProductionModifier - Production %s is disabled", production.id))
+        return
     end
 
     if not production or not self.SETTINGS.originalValues[production.id] then
+        print("FactoryProductionModifier - Missing production or original values")
+        return
+    end
+
+    -- Debug: Stampa i valori originali
+    print(string.format("FactoryProductionModifier - Original values for %s:", production.id))
+    if self.SETTINGS.originalValues[production.id].cyclesPerHour then
+        print(string.format("  Original cyclesPerHour: %f", self.SETTINGS.originalValues[production.id].cyclesPerHour))
+    end
+
+    -- Check if current month is August (8) or December (12)
+    if currentMonth == 8 or currentMonth == 12 then
+        print(string.format("FactoryProductionModifier - Month %d detected, resetting to original values", currentMonth))
+        
+        -- Reset to original values for August and December
+        if self.SETTINGS.originalValues[production.id].cyclesPerMinute then
+            production.cyclesPerMinute = self.SETTINGS.originalValues[production.id].cyclesPerMinute
+            print(string.format("  Reset cyclesPerMinute to: %f", production.cyclesPerMinute))
+        end
+        if self.SETTINGS.originalValues[production.id].cyclesPerHour then
+            production.cyclesPerHour = self.SETTINGS.originalValues[production.id].cyclesPerHour
+            print(string.format("  Reset cyclesPerHour to: %f", production.cyclesPerHour))
+        end
+        if self.SETTINGS.originalValues[production.id].cyclesPerMonth then
+            production.cyclesPerMonth = self.SETTINGS.originalValues[production.id].cyclesPerMonth
+            print(string.format("  Reset cyclesPerMonth to: %f", production.cyclesPerMonth))
+        end
         return
     end
 
@@ -153,18 +243,24 @@ function FactoryProductionModifier:updateProductionCycles(production)
     local multiplier = tonumber(self.SETTINGS.multiplier)
 
     if not multiplier then
+        print("FactoryProductionModifier - Invalid multiplier value")
         return
     end
 
-    -- Usa i valori originali per il calcolo solo se la produzione è abilitata
+    print(string.format("FactoryProductionModifier - Applying multiplier %f", multiplier))
+
+    -- Apply multiplier for all other months
     if original.cyclesPerMinute then
         production.cyclesPerMinute = original.cyclesPerMinute * multiplier
+        print(string.format("  Set cyclesPerMinute to: %f", production.cyclesPerMinute))
     end
     if original.cyclesPerHour then
         production.cyclesPerHour = original.cyclesPerHour * multiplier
+        print(string.format("  Set cyclesPerHour to: %f", production.cyclesPerHour))
     end
     if original.cyclesPerMonth then
         production.cyclesPerMonth = original.cyclesPerMonth * multiplier
+        print(string.format("  Set cyclesPerMonth to: %f", production.cyclesPerMonth))
     end
 end
 
@@ -174,7 +270,10 @@ function FactoryProductionModifier:reset()
 end
 
 function FactoryProductionModifier:load(mission)
+    print("FactoryProductionModifier - Load function called")
+    
     if self.isLoaded then
+        print("FactoryProductionModifier - Already loaded, skipping")
         return
     end
 
@@ -195,21 +294,25 @@ function FactoryProductionModifier:load(mission)
         return
     end
 
-    local success, result =
-        pcall(
+    -- Debug: Print current month before processing
+    local currentMonth = self:getCurrentMonth()
+    print(string.format("FactoryProductionModifier - Processing productions for month: %d", currentMonth))
+
+    local success, result = pcall(
         function()
             local count = 0
             for _, point in pairs(pcm.productionPoints) do
                 if point and point.productions then
                     for _, prod in pairs(point.productions) do
                         if prod and prod.id and self:isProductionId(prod.id) then
-                        if not self.SETTINGS.originalValues[prod.id] then
-                            self.SETTINGS.originalValues[prod.id] = {
-                                cyclesPerMinute = prod.cyclesPerMinute,
-                                cyclesPerHour = prod.cyclesPerHour,
-                                cyclesPerMonth = prod.cyclesPerMonth
-                            }
-                        end
+                            if not self.SETTINGS.originalValues[prod.id] then
+                                print(string.format("FactoryProductionModifier - Saving original values for production: %s", prod.id))
+                                self.SETTINGS.originalValues[prod.id] = {
+                                    cyclesPerMinute = prod.cyclesPerMinute,
+                                    cyclesPerHour = prod.cyclesPerHour,
+                                    cyclesPerMonth = prod.cyclesPerMonth
+                                }
+                            end
 
                             self:updateProductionCycles(prod)
                             count = count + 1
@@ -239,14 +342,58 @@ function FactoryProductionModifier:isProductionId(prodId)
 end
 
 function FactoryProductionModifier:update(dt)
+    -- Initial load handling
     if not self.isLoaded then
         self.loadTimer = self.loadTimer + dt
         if self.loadTimer >= 200 then
+            print("FactoryProductionModifier - Initial load triggered")
             self:load(g_currentMission)
-            g_currentMission:removeUpdateable(self)
+            -- Non rimuoviamo più l'updateable per continuare a monitorare i cambiamenti di mese
+        end
+        return
+    end
+
+    -- Verifica se g_currentMission e environment esistono
+    if not g_currentMission or not g_currentMission.environment then
+        return
+    end
+
+    -- Ottieni il mese corrente
+    local currentMonth = self:getCurrentMonth()
+    if not currentMonth then
+        return
+    end
+
+    -- Inizializza lastCheckedMonth se non esiste
+    if not self.lastCheckedMonth then
+        self.lastCheckedMonth = currentMonth
+        print(string.format("FactoryProductionModifier - Initial month set to: %d", self.lastCheckedMonth))
+        return
+    end
+
+    -- Controlla se il mese è cambiato
+    if currentMonth ~= self.lastCheckedMonth then
+        print(string.format("FactoryProductionModifier - Month changed from %d to %d", self.lastCheckedMonth, currentMonth))
+        self.lastCheckedMonth = currentMonth
+
+        -- Ricarica tutte le produzioni con i nuovi valori
+        if g_currentMission and g_currentMission.productionChainManager then
+            local pcm = g_currentMission.productionChainManager
+            if pcm.productionPoints then
+                for _, point in pairs(pcm.productionPoints) do
+                    if point and point.productions then
+                        for _, prod in pairs(point.productions) do
+                            if prod and prod.id and self:isProductionId(prod.id) then
+                                self:updateProductionCycles(prod)
+                            end
+                        end
+                    end
+                end
+            end
         end
     end
 end
+
 
 function FactoryProductionModifier:onSettingsChanged()
     self.isLoaded = false
@@ -296,18 +443,8 @@ function FactoryProductionModifier:onLoadGame(mission)
             multiOption.id = "factoryMultiplierSlider_option"
 
             -- Configure the multi option settings
-            multiOption.texts = {
-                "1x ",
-                "2x ",
-                "3x ",
-                "4x ",
-                "5x ",
-                "6x ",
-                "7x ",
-                "8x ",
-                "9x "
-            }
-            multiOption.values = {1, 2, 3, 4, 5, 6, 7, 8, 9}
+            multiOption.texts = {"1x ", "2x ", "3x ", "4x ", "5x "}
+            multiOption.values = {1, 2, 3, 4, 5}
             local initialState = tonumber(self.SETTINGS.selectedValue) or 2
             multiOption:setState(initialState)
             print("DEBUG: Setting initial state to: " .. tostring(initialState))
@@ -419,23 +556,21 @@ function FactoryProductionModifier:onLoadGame(mission)
             menuBinaryOption.id = prod.id
             menuBinaryOption.target = sectionProd
 
-            -- Imposta il callback
-            menuBinaryOption:setCallback("onClickCallback", "onMenuOptionChanged")
-            menuBinaryOption:setDisabled(false)
-            updateFocusIds(menuOptionBox)
+            -- Store reference to our mod environment
+            local mod = self
+            
+            -- Set up the callback properly
+            menuBinaryOption.onClickCallback = function()
+                local state = menuBinaryOption:getState()
+                mod:onMenuOptionChanged(state, prod.id)
+                print(string.format("Checkbox changed for %s to state %s", prod.id, tostring(state)))
+            end
 
-            -- Imposta il tooltip
-            local toolTip = menuBinaryOption.elements[1]
-            toolTip:setText(g_i18n:getText("production_tooltip") .. " " .. g_i18n:getText(prod.name))
-
-            -- Imposta il testo della label
-            local setting = menuOptionBox.elements[2]
-            setting:setText(g_i18n:getText(prod.name))
-
-            -- Imposta i testi e lo stato
+            -- Set texts and initial state
             menuBinaryOption:setTexts({"Enabled", "Disabled"})
+            menuBinaryOption:setDisabled(false)
 
-            -- Imposta lo stato iniziale
+            -- Set initial state from saved settings
             local initialState = self.SETTINGS.productionEnabled[prod.id]
             if initialState == nil then
                 initialState = true
@@ -443,49 +578,76 @@ function FactoryProductionModifier:onLoadGame(mission)
             end
             menuBinaryOption:setState(initialState and 1 or 2)
 
-            -- Aggiorna i focus ID
-            menuOptionBox.focusId = FocusManager:serveAutoFocusId()
+            -- Setup tooltip and label
+            local toolTip = menuBinaryOption.elements[1]
+            toolTip:setText(g_i18n:getText("production_tooltip") .. " " .. g_i18n:getText(prod.name))
 
-            -- Aggiungi alla lista dei controlli
+            local setting = menuOptionBox.elements[2]
+            setting:setText(g_i18n:getText(prod.name))
+
+            -- Update focus IDs
+            menuOptionBox.focusId = FocusManager:serveAutoFocusId()
+            
+            -- Add to controls list
             table.insert(settingsPage.controlsList, menuOptionBox)
             menuOptionBox:updateAbsolutePosition()
-            -- Forza il ricalcolo del layout
-            settingsPage.generalSettingsLayout:invalidateLayout()
         end
+
+        -- Force layout recalculation
+        settingsPage.generalSettingsLayout:invalidateLayout()
     end
 end
 
--- Aggiungi la funzione di callback
+
 function FactoryProductionModifier:onMenuOptionChanged(state, id)
+    print(string.format("onMenuOptionChanged called with state %s and id %s", tostring(state), tostring(id)))
+    
     if id and self.SETTINGS.productionEnabled then
-        self.SETTINGS.productionEnabled[id] = (state == 1)
-        self:saveConfig()
+        local enabled = (state == 1)
+        self.SETTINGS.productionEnabled[id] = enabled
+        print(string.format("Setting %s to %s", id, tostring(enabled)))
+        
+        local saved = self:saveConfig()
+        print(string.format("Save config result: %s", tostring(saved)))
+        
         self:onSettingsChanged()
+    else
+        print("Invalid id or settings table not initialized")
     end
 end
 
 function FactoryProductionModifier:saveConfig()
     local userSettingsFile = Utils.getFilename("modSettings/FactoryProductionModifier.xml", getUserProfileAppPath())
+    print(string.format("Saving config to: %s", userSettingsFile))
+    
     local xmlFile = createXMLFile("FactoryProductionSettings", userSettingsFile, "factoryProduction")
 
     if xmlFile and xmlFile ~= 0 then
         setXMLFloat(xmlFile, "factoryProduction#multiplier", self.SETTINGS.multiplier)
         setXMLInt(xmlFile, "factoryProduction#selectedValue", self.SETTINGS.selectedValue)
 
-        -- Salva lo stato di ogni produzione
+        -- Save production states with debug logging
         for _, prod in ipairs(ProductionsIds) do
             local enabled = self.SETTINGS.productionEnabled[prod.id]
             if enabled ~= nil then
-                setXMLBool(xmlFile, "factoryProduction.productions." .. prod.id .. "#enabled", enabled)
+                local path = "factoryProduction.productions." .. prod.id .. "#enabled"
+                setXMLBool(xmlFile, path, enabled)
+                print(string.format("Saved %s = %s", path, tostring(enabled)))
             end
         end
 
         saveXMLFile(xmlFile)
         delete(xmlFile)
+        print("Config file saved successfully")
         return true
     end
+    
+    print("Failed to create or save XML file")
     return false
 end
+
+
+
 
 local modDirectory = g_currentModDirectory or ""
 local modName = g_currentModName or "unknown"
