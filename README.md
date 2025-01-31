@@ -20,3 +20,10 @@ The maintenance status will influence the production speed
 
 Please take in mind that I'm no programmer and this is my first time trying to do something like this
 there is probably BS on my code so any contributions are welcome
+
+![alt text](images/iconBig.jpg)
+![alt text](images/screenshot0.jpg)
+![alt text](images/screenshot1.jpg)
+![alt text](images/screenshot2.jpg)
+![alt text](images/Immagine.png)
+
