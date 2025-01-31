@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<GUI name="FactoryProductionMenu" onOpen="onOpen" onClose="onClose" handleFocus="true" focusInit="true">
+    <GuiElement profile="newLayer"/>
+    <Bitmap profile="dialogFullscreenBg" id="FPMdialogFullscreenBg" />
+
+    <GuiElement profile="fs25_dialogBg" id="FPMdialogElement" size="1600px 900px">
+        <ThreePartBitmap profile="fs25_dialogBgMiddleSmall"/>
+        <ThreePartBitmap profile="fs25_dialogBgTopSmall"/>
+        <ThreePartBitmap profile="fs25_dialogBgBottom"/>
+
+        <GuiElement profile="fs25_dialogContentContainer" id="FPMdialogContentContainer">
+            <Text profile="fs25_dialogTitle" id="guiTitle" position="0px -20px"/>
+            <ThreePartBitmap profile="fs25_lineSeparatorTop" absoluteSizeOffset="100px 0px" position="0px -80px"/>
+
+            <!-- Sinistra: FPMboxLayout -->
+            <ScrollingLayout profile="fs25_settingsLayout" id="FPMboxLayout" topClipperElementName="topClipper" bottomClipperElementName="bottomClipper" position="-570px -100px" width="420px" height="680px">
+                <Text profile="fs25_settingsSectionHeader" name="FPMHeader" text="Questa riga viene rimossa all'inserimento dei bottoni"/>
+            </ScrollingLayout>
+
+            <Bitmap profile="fs25_settingsTooltipSeparator" height="680px" position="450px -110px"/>
+
+            <!-- Destra: FPMboxLayoutRight -->
+            <ScrollingLayout profile="fs25_settingsLayout" id="FPMboxLayoutRight" topClipperElementName="topClipperRight" bottomClipperElementName="bottomClipperRight" position="200px -100px" width="1000px" height="680px">
+                <!-- Testi sulla parte destra -->
+                <Text profile="fs25_dialogText" id="rightText1" text="Testo 1 sulla destra Questa riga viene rimossa dallo script lua" position="0px 0px" textAlign="left" width="450px"/>
+ 
+                <!-- Aggiungi altre linee se necessario per testare lo scrolling -->
+            </ScrollingLayout>
+
+            <!-- Aggiungi il controllo Slider per la parte destra -->
+            <ThreePartBitmap profile="fs25_sliderDockedBg">
+                <ThreePartBitmap profile="fs25_sliderDockedBox">
+                    <Slider profile="fs25_sliderDocked" dataElementId="FPMboxLayout"/>
+                </ThreePartBitmap>
+            </ThreePartBitmap>
+
+        </GuiElement>
+
+        <!-- Bottoni -->
+        <BoxLayout profile="fs25_dialogButtonBox">
+            <Button profile="buttonOK" id="yesButton" text="$l10n_button_ok" onClick="onClickOk"/>
+        </BoxLayout>
+    </GuiElement>
+</GUI>
