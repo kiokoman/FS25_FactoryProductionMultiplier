@@ -4,9 +4,12 @@ Author: 	Kiokoman
 Date: 		25.12.2024
 Version:	1.0.0.0
 ]]
+
+source(g_currentModDirectory .. "scripts/menu.lua");
+
 FactoryProductionModifier = {}
 FactoryProductionModifier.path = g_currentModDirectory
-local FactoryProductionModifier_mt = Class(FactoryProductionModifier)
+
 
 
 local ProductionsIds = {
@@ -145,13 +148,13 @@ function FactoryProductionModifier:getCurrentMonth()    -- Verifica se g_current
         local currentSeason = g_currentMission.environment.currentSeason
         local dayInSeason = g_currentMission.environment.currentDayInSeason
         local daysPerPeriod = g_currentMission.environment.daysPerPeriod  -- parametro per i giorni per periodo
-        
+
         -- Calcola il mese in base alla stagione e al numero di giorni per periodo
         local month
-        
+
         -- Calcola quale mese corrisponde
         local monthIndex = math.ceil(dayInSeason / daysPerPeriod)  -- Dividi i giorni in base alla durata del periodo
-        
+
         -- Determina il mese sulla base della stagione
         if currentSeason == 1 then
             -- Primavera (Marzo, Aprile, Maggio)
@@ -190,6 +193,7 @@ function FactoryProductionModifier:getCurrentMonth()    -- Verifica se g_current
                 month = 2 -- Febbraio
             end
         end
+
         return month
     else
         print("g_currentMission.environment non esiste!")
@@ -222,7 +226,7 @@ function FactoryProductionModifier:updateProductionCycles(production)
     -- Check if current month is August (8) or December (12)
     if currentMonth == 8 or currentMonth == 12 then
         print(string.format("FactoryProductionModifier - Month %d detected, resetting to original values", currentMonth))
-        
+
         -- Reset to original values for August and December
         if self.SETTINGS.originalValues[production.id].cyclesPerMinute then
             production.cyclesPerMinute = self.SETTINGS.originalValues[production.id].cyclesPerMinute
@@ -271,7 +275,7 @@ end
 
 function FactoryProductionModifier:load(mission)
     print("FactoryProductionModifier - Load function called")
-    
+
     if self.isLoaded then
         print("FactoryProductionModifier - Already loaded, skipping")
         return
@@ -390,7 +394,8 @@ function FactoryProductionModifier:update(dt)
                     end
                 end
             end
-        end
+	FactoryProductionMenu:incrementMaintenanceMonths()
+	end
     end
 end
 
@@ -399,6 +404,7 @@ function FactoryProductionModifier:onSettingsChanged()
     self.isLoaded = false
     self:load(g_currentMission)
 end
+
 
 function FactoryProductionModifier:onLoadGame(mission)
     if mission:getIsClient() then
@@ -558,7 +564,7 @@ function FactoryProductionModifier:onLoadGame(mission)
 
             -- Store reference to our mod environment
             local mod = self
-            
+
             -- Set up the callback properly
             menuBinaryOption.onClickCallback = function()
                 local state = menuBinaryOption:getState()
@@ -587,7 +593,7 @@ function FactoryProductionModifier:onLoadGame(mission)
 
             -- Update focus IDs
             menuOptionBox.focusId = FocusManager:serveAutoFocusId()
-            
+
             -- Add to controls list
             table.insert(settingsPage.controlsList, menuOptionBox)
             menuOptionBox:updateAbsolutePosition()
@@ -601,15 +607,15 @@ end
 
 function FactoryProductionModifier:onMenuOptionChanged(state, id)
     print(string.format("onMenuOptionChanged called with state %s and id %s", tostring(state), tostring(id)))
-    
+
     if id and self.SETTINGS.productionEnabled then
         local enabled = (state == 1)
         self.SETTINGS.productionEnabled[id] = enabled
         print(string.format("Setting %s to %s", id, tostring(enabled)))
-        
+
         local saved = self:saveConfig()
         print(string.format("Save config result: %s", tostring(saved)))
-        
+
         self:onSettingsChanged()
     else
         print("Invalid id or settings table not initialized")
@@ -619,7 +625,7 @@ end
 function FactoryProductionModifier:saveConfig()
     local userSettingsFile = Utils.getFilename("modSettings/FactoryProductionModifier.xml", getUserProfileAppPath())
     print(string.format("Saving config to: %s", userSettingsFile))
-    
+
     local xmlFile = createXMLFile("FactoryProductionSettings", userSettingsFile, "factoryProduction")
 
     if xmlFile and xmlFile ~= 0 then
@@ -641,7 +647,7 @@ function FactoryProductionModifier:saveConfig()
         print("Config file saved successfully")
         return true
     end
-    
+
     print("Failed to create or save XML file")
     return false
 end
@@ -652,21 +658,16 @@ end
 local modDirectory = g_currentModDirectory or ""
 local modName = g_currentModName or "unknown"
 local modEnvironment = FactoryProductionModifier.new()
+
 modEnvironment:loadConfig()
 
-FSBaseMission.onStartMission =
-    Utils.appendedFunction(
-    FSBaseMission.onStartMission,
-    function()
-        g_currentMission:addUpdateable(modEnvironment)
+FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, function() 
+    g_currentMission:addUpdateable(modEnvironment)
     end
 )
 
-Mission00.loadMission00Finished =
-    Utils.appendedFunction(
-    Mission00.loadMission00Finished,
-    function(mission)
-        modEnvironment:onLoadGame(mission)
+Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, function(mission) 
+    modEnvironment:onLoadGame(mission)
     end
 )
 -- Quando viene caricata una nuova partita
