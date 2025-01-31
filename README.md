@@ -17,3 +17,6 @@ TODO:
 
 I intend to implement a maintenance system (WIP) of factories, pressing the default key M opens a window where you can see the maintenance status and pay for the repair
 The maintenance status will influence the production speed 
+
+Please take in mind that I'm no programmer and this is my first time trying to do something like this
+there is probably BS on my code so any contributions are welcome
