@@ -23,17 +23,16 @@ function FactoryProductionMenu.new(target, custom_mt)
     self.name = "FactoryProductionMenu"
     self.i18n = l18n or g_i18n
     self.inputBinding = inputBinding or g_inputBinding
-	FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, FactoryProductionMenu.onSavegame)
+    FSBaseMission.saveSavegame = Utils.appendedFunction(FSBaseMission.saveSavegame, FactoryProductionMenu.onSavegame)
     return self
 end
 
 function FactoryProductionMenu:loadMap(name)
-	g_factoryProductionMenu = self
+    g_factoryProductionMenu = self
     print("FactoryProductionMenu: Inizializzazione...")
     if g_gui then
         FactoryProductionMenu.register()
         FactoryProductionMenu:registerActionEvents()
-	FactoryProductionMenu:initializeXML()
         print("FactoryProductionMenu: appendedFunction")
         FSBaseMission.registerActionEvents =
             Utils.appendedFunction(FSBaseMission.registerActionEvents, FactoryProductionMenu.registerActionEvents)
@@ -137,31 +136,52 @@ function FactoryProductionMenu:listFactories()
         boxLayoutElementR:removeElement(boxLayoutElementR.elements[1])
     end
 
+
     local originalButton = inGameMenu.contractorButton
     if originalButton == nil then
         print("Error: Could not find the original button to clone!")
         return
     end
 
-    local firstButton = nil -- Variabile locale per il primo bottone
-
-    local currentMonth = FactoryProductionModifier:getCurrentMonth()
-    print("Current Month: " .. currentMonth)
-    -- Carica i dati di manutenzione, assicurandosi che non sia nil
-    local maintenanceData = FactoryProductionMenu:loadMaintenanceData()
-    if not maintenanceData then
-        print("maintenanceData risulta vuoto")
-        maintenanceData = {} -- Inizializza una tabella vuota se non è stata trovata
-    end
+    local firstButton = nil
 
     local yellowColor = {1, 1, 0, 1}
     local greenColor = {0.1, 1, 0.1, 1}
     local orangeColor = {1, 0.647, 0, 1}
     local redColor = {1, 0, 0, 1}
 
+    -- Carica il file XML per i dati di manutenzione
+    local userSettingsFile =
+        Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
+    local xmlFile = loadXMLFile("FactoryProductionSettings", userSettingsFile)
+
+    if xmlFile == nil then
+        print("Error: Could not load XML file for maintenance data")
+        return
+    end
+
+    -- Funzione per ottenere i mesi di manutenzione per una fabbrica
+    local function getMaintenanceMonths(factoryId)
+        local pointIndex = 0
+        while true do
+            local basePath = string.format("settings.productionPoints.point(%d)", pointIndex)
+            local currentFactoryId = getXMLString(xmlFile, basePath .. ".factoryId")
+
+            if currentFactoryId == nil then
+                break
+            end
+
+            if currentFactoryId == factoryId then
+                local maintenanceKey = string.format("settings.productionPoints.point(%d).maintenanceMonths", pointIndex)
+                return getXMLInt(xmlFile, maintenanceKey) or 0
+            end
+            pointIndex = pointIndex + 1
+        end
+        return 0 -- Se non trovato
+    end
+
     -- Itera su ogni ProductionPoint
     for _, productionPoint in ipairs(productionPoints) do
-        -- Estrazione delle informazioni dal percorso aggiornato
         local unloadingStation = productionPoint.unloadingStation
         if unloadingStation and unloadingStation.owningPlaceable then
             local owningPlaceable = unloadingStation.owningPlaceable
@@ -178,23 +198,8 @@ function FactoryProductionMenu:listFactories()
                 local factoryId = owningPlaceable.uniqueId
                 local factoryName = nameCustom
 
-                -- Ottieni i mesi di manutenzione associati a questa fabbrica direttamente dall'XML
-                local userSettingsFile =
-                    Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
-                local xmlFile = loadXMLFile("FactoryProductionSettings", userSettingsFile)
-
-                if xmlFile == nil then
-                    print("Error: Could not load XML file for maintenance data")
-                    return
-                end
-
-                -- Ottieni i mesi di manutenzione per la fabbrica specifica
-                local maintenanceKey = string.format("settings.productionPoints.%s.maintenanceMonths", factoryId)
-                --print(maintenanceKey)
-                local maintenanceMonths = getXMLInt(xmlFile, maintenanceKey) or 0 -- Se non esiste, imposta a 0
-                --print(maintenanceMonths)
-                -- Chiudi il file XML dopo aver letto il valore
-                delete(xmlFile)
+                local maintenanceMonths = getMaintenanceMonths(factoryId) -- Ottieni i mesi di manutenzione
+                print(string.format("Maintenance months for factory %s (ID: %s): %d", factoryName, factoryId, maintenanceMonths))
 
                 local repairCost = 0
                 if maintenanceMonths == 1 then
@@ -217,10 +222,8 @@ function FactoryProductionMenu:listFactories()
                     repairCost = 90000
                 end
 
-                local monthTextFormatted = g_i18n:getText("maintenance_info")
-                --print(monthTextFormatted)
-                local monthsText = string.format(monthTextFormatted, maintenanceMonths, repairCost)
-                --print(monthsText)
+                local monthsText = string.format(g_i18n:getText("maintenance_info"), maintenanceMonths, repairCost)
+                print(monthsText)
 
                 -- Clona il pulsante e lo aggiungi alla lista
                 local menuOptionBox = originalButton:clone(boxLayoutElement)
@@ -231,17 +234,13 @@ function FactoryProductionMenu:listFactories()
                 menuOptionBox.inputEnabled = true
 
                 local defaultColor = {0.89627, 0.92158, 0.81485, 1} -- Colore di default
-                -- local selectedColor = {0.1, 1, 0.1, 1} -- Colore quando selezionato (rosso)
-
-                -- Variabile per tenere traccia dello stato di selezione
-                --local isSelected = false
-
-                -- Cambia il colore quando il bottone viene cliccato
+                local greenColor = {0.1, 1, 0.1, 1}
 
                 menuOptionBox.onClickCallback = function()
-                    --print(string.format("Clicked on factory: %s", factoryName))
-                    menuOptionBox:setTextColor(unpack(greenColor)) -- Cambia al colore selezionato
+                    print(string.format("Clicked on factory: %s", factoryName))
+                    menuOptionBox:setTextColor(unpack(greenColor))
 
+                    -- Verifica se ci sono abbastanza soldi per la riparazione
                     local playerMoney = g_currentMission.missionInfo.money
                     if playerMoney >= repairCost then
                         -- Sottrai l'ammontare della riparazione dai soldi del giocatore
@@ -252,9 +251,9 @@ function FactoryProductionMenu:listFactories()
                             true,
                             true
                         )
-                        --print(string.format("Paying for factory repair: -%d money", repairCost))
+                        print(string.format("Paying for factory repair: -%d money", repairCost))
 
-                        -- Resetta i mesi di manutenzione per questa fabbrica direttamente nell'XML
+                        -- Carica nuovamente il file XML per i dati di manutenzione
                         local userSettingsFile =
                             Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
                         local xmlFile = loadXMLFile("FactoryProductionSettings", userSettingsFile)
@@ -264,21 +263,36 @@ function FactoryProductionMenu:listFactories()
                             return
                         end
 
-                        -- Resetta i mesi di manutenzione a 0
-                        local maintenanceKey =
-                            string.format("settings.productionPoints.%s.maintenanceMonths", factoryId)
-                        setXMLInt(xmlFile, maintenanceKey, 0)
+                        -- Trova il nodo point con il factoryId corrispondente e aggiorna i mesi di manutenzione
+                        local pointIndex = 0
+                        while true do
+                            local basePath = string.format("settings.productionPoints.point(%d)", pointIndex)
+                            local currentFactoryId = getXMLString(xmlFile, basePath .. ".factoryId")
 
-                        -- Salva il file XML dopo aver aggiornato i dati
-                        saveXMLFile(xmlFile)
+                            if currentFactoryId == nil then
+                                break
+                            end
+
+                            if currentFactoryId == factoryId then
+                                -- Resetta i mesi di manutenzione a 0
+                                local maintenanceKey = string.format("settings.productionPoints.point(%d).maintenanceMonths", pointIndex)
+                                setXMLInt(xmlFile, maintenanceKey, 0) -- Setta il valore a 0
+                                print(string.format("Maintenance reset for factory: %s (ID: %s)", factoryName, factoryId))
+
+                                -- Salva il file XML con le modifiche
+                                saveXMLFile(xmlFile, userSettingsFile)
+                                break
+                            end
+                            pointIndex = pointIndex + 1
+                        end
+
+                        -- Chiudi il file XML
                         delete(xmlFile)
 
-                        -- Stampa il messaggio
-                        --print(string.format("Maintenance reset for factory: %s (ID: %s)", factoryName, factoryId))
-
+                        -- Aggiorna il testo di manutenzione
                         if menuOptionBox.maintenanceText then
-                            local updatedText = string.format(monthTextFormatted, 0, 0) -- I nuovi valori di manutenzione e costo
-                            menuOptionBox.maintenanceText:setText(updatedText) -- Aggiorna il testo con i nuovi valori
+                            local updatedText = string.format(g_i18n:getText("maintenance_info"), 0, 0) -- Valori resettati
+                            menuOptionBox.maintenanceText:setText(updatedText)
                         end
                     else
                         -- Non abbastanza soldi
@@ -292,6 +306,7 @@ function FactoryProductionMenu:listFactories()
                 menuOptionBox.focusActive = true
                 menuOptionBox.focusId = FocusManager:serveAutoFocusId()
 
+                -- Creazione e gestione del testo di manutenzione
                 local maintenanceText = TextElement:new()
                 maintenanceText:setText(monthsText)
                 maintenanceText:setTextColor(1, 1, 1, 1)
@@ -303,16 +318,32 @@ function FactoryProductionMenu:listFactories()
                 maintenanceText.setTextSize = 0.001
                 maintenanceText.focusActive = true
                 maintenanceText.focusId = FocusManager:serveAutoFocusId()
+
+                -- Assegna il colore in base ai mesi di manutenzione
                 if maintenanceMonths == 0 then
                     maintenanceText:setTextColor(unpack(greenColor))
                 elseif maintenanceMonths == 1 then
                     maintenanceText:setTextColor(unpack(greenColor))
-                elseif maintenanceMonths >= 2 and maintenanceMonths <= 5 then
+                elseif maintenanceMonths == 2 then
                     maintenanceText:setTextColor(unpack(yellowColor))
-                elseif maintenanceMonths >= 6 and maintenanceMonths <= 7 then
+                elseif maintenanceMonths == 3 then
+                    maintenanceText:setTextColor(unpack(yellowColor))
+                elseif maintenanceMonths == 4 then
+                    maintenanceText:setTextColor(unpack(yellowColor))
+                elseif maintenanceMonths == 5 then
                     maintenanceText:setTextColor(unpack(orangeColor))
-                else
+                elseif maintenanceMonths == 6 then
+                    maintenanceText:setTextColor(unpack(orangeColor))
+                elseif maintenanceMonths == 7 then
+                    maintenanceText:setTextColor(unpack(orangeColor))
+                elseif maintenanceMonths == 8 then
                     maintenanceText:setTextColor(unpack(redColor))
+                elseif maintenanceMonths == 9 then
+                    maintenanceText:setTextColor(unpack(redColor))
+                elseif maintenanceMonths > 9 then
+                    maintenanceText:setTextColor(unpack(redColor))
+                else
+                    print(maintenanceMonths)
                 end
 
                 menuOptionBox.maintenanceText = maintenanceText
@@ -324,14 +355,14 @@ function FactoryProductionMenu:listFactories()
                     firstButton = menuOptionBox
                 end
 
-                --print(string.format("Added button for factory: %s (ID: %s)", factoryName, factoryId))
+                print(string.format("Added button for factory: %s (ID: %s)", factoryName, factoryId))
             end
         end
     end
 
+    -- Aggiorna layout dopo aver aggiunto tutti i pulsanti
     boxLayoutElement:invalidateLayout()
     boxLayoutElement:updateAbsolutePosition()
-
     boxLayoutElementR:invalidateLayout()
     boxLayoutElementR:updateAbsolutePosition()
 
@@ -339,9 +370,11 @@ function FactoryProductionMenu:listFactories()
     if firstButton then
         FocusManager:setFocus(firstButton)
     end
-end
 
-function FactoryProductionMenu:loadMaintenanceData(maintenanceData)
+    -- Chiudi il file XML
+    delete(xmlFile)
+end
+function FactoryProductionMenu:loadMaintenanceData(maintenanceData) --inutilizzato
     local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
 
     -- Verifica se il file XML esiste
@@ -409,21 +442,21 @@ end
 function FactoryProductionMenu:initializeXML()
     local permanentSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance_final.xml", getUserProfileAppPath())
     local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
-
+    local factoryCounter = 0
     -- Verifica se il file XML esiste
     local xmlFile
     if not fileExists(userSettingsFile) and not fileExists(permanentSettingsFile) then
         local folderPath = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier", getUserProfileAppPath())
 
--- Verifica se la cartella esiste già, altrimenti creala
-if not fileExists(folderPath) then
-    createFolder(folderPath)
-    print("La cartella FS25_FactoryProductionMultiplier è stata creata con successo.")
-else
-    print("La cartella FS25_FactoryProductionMultiplier esiste già.")
-end
+        -- Verifica se la cartella esiste già, altrimenti creala
+        if not fileExists(folderPath) then
+            createFolder(folderPath)
+            print("La cartella FS25_FactoryProductionMultiplier è stata creata con successo.")
+        else
+            print("La cartella FS25_FactoryProductionMultiplier esiste già.")
+        end
 
-	print("FactoryProductionMenu Creo nuovo file xml per la manutenzione .")
+        print("FactoryProductionMenu Creo nuovo file xml per la manutenzione .")
         -- Se entrambi i file non esistono, creiamo un file vuoto con la struttura di base
         xmlFile = createXMLFile("FactoryProductionSettings", userSettingsFile, "settings")
 
@@ -433,27 +466,26 @@ end
         -- Itera su ogni ProductionPoint e aggiungi i dati nell'XML
         for _, productionPoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
             local unloadingStation = productionPoint.unloadingStation
+
             if unloadingStation and unloadingStation.owningPlaceable then
                 local owningPlaceable = unloadingStation.owningPlaceable
-                local storeItem =
-                    owningPlaceable.placeableLoadingData and owningPlaceable.placeableLoadingData.storeItem
+                local storeItem = owningPlaceable.placeableLoadingData and owningPlaceable.placeableLoadingData.storeItem
                 local nameCustom = owningPlaceable.nameCustom
 
-                -- Se non c'è un nome personalizzato, usa il nome dal storeItem
                 if nameCustom == nil or nameCustom == "" then
                     nameCustom = storeItem and storeItem.name or "Unknown Factory"
                 end
 
-                -- Verifica la categoria
                 if storeItem and storeItem.categoryName == "PRODUCTIONPOINTS" then
                     local factoryId = owningPlaceable.uniqueId
+                    factoryCounter = factoryCounter + 1
 
-                    -- Crea il nodo di manutenzione e imposta i valori iniziali
-                    local maintenanceKey = string.format("settings.productionPoints.%s.maintenanceMonths", factoryId)
-                    setXMLInt(xmlFile, maintenanceKey, 0) -- Imposta 0 mesi di manutenzione
-
-                    -- Aggiungi anche il nome della fabbrica
-                    setXMLString(xmlFile, string.format("settings.productionPoints.%s.name", factoryId), nameCustom)
+                    -- Nuovo schema XML
+                    local baseNodePath = string.format("settings.productionPoints.point(%d)", factoryCounter - 1)
+                    setXMLString(xmlFile, baseNodePath .. "#id", tostring(factoryCounter))
+                    setXMLInt(xmlFile, baseNodePath .. ".maintenanceMonths", 0)
+                    setXMLString(xmlFile, baseNodePath .. ".name", nameCustom)
+                    setXMLString(xmlFile, baseNodePath .. ".factoryId", factoryId)
                 end
             end
         end
@@ -467,7 +499,7 @@ end
         -- Se entrambi i file esistono, sovrascriviamo il file temporaneo con il file definitivo
         copyFile(permanentSettingsFile, userSettingsFile, true)
         print("FactoryProductionMenu Temporary XML file updated with permanent data.")
-        
+
     elseif not fileExists(userSettingsFile) and fileExists(permanentSettingsFile) then
         -- Se solo il file definitivo esiste, copiamo i dati nel file temporaneo
         copyFile(permanentSettingsFile, userSettingsFile, true)
@@ -476,9 +508,9 @@ end
     elseif fileExists(userSettingsFile) and not fileExists(permanentSettingsFile) then
         -- Cancella il file temporaneo e richiamata la funzione di inizializzazione
         deleteFile(userSettingsFile)
-	print("FactoryProductionMenu Deleted temporary XML file.")
+        print("FactoryProductionMenu Deleted temporary XML file.")
         -- Richiama la funzione per ricreare il file
-        FactoryProductionMenu:initializeXML()     
+        FactoryProductionMenu:initializeXML()
     else
         -- Questo caso non dovrebbe mai accadere
         print("FactoryProductionMenu Unexpected condition: Something went wrong.")
@@ -500,34 +532,47 @@ function FactoryProductionMenu:incrementMaintenanceMonths()
         local unloadingStation = productionPoint.unloadingStation
         if unloadingStation and unloadingStation.owningPlaceable then
             local owningPlaceable = unloadingStation.owningPlaceable
-            local factoryId = owningPlaceable.uniqueId -- Otteniamo l'ID univoco della fabbrica
+            local factoryId = owningPlaceable.uniqueId
             local storeItem = owningPlaceable.placeableLoadingData and owningPlaceable.placeableLoadingData.storeItem
             local nameCustom = owningPlaceable.nameCustom
 
-            -- Se non c'è un nome personalizzato, usa il nome dal storeItem
             if nameCustom == nil or nameCustom == "" then
                 nameCustom = storeItem and storeItem.name or "Unknown Factory"
             end
 
-            -- Verifica la categoria
             if storeItem and storeItem.categoryName == "PRODUCTIONPOINTS" then
-                -- Crea la chiave per i mesi di manutenzione usando l'ID della fabbrica
-                local maintenanceKey = string.format("settings.productionPoints.%s.maintenanceMonths", factoryId)
+                local nodeIndex = 0
+                local found = false
 
-                -- Verifica se esistono i dati di manutenzione per questa fabbrica
-                local maintenanceMonths = getXMLInt(xmlFile, maintenanceKey)
+                while true do
+                    local nodePath = string.format("settings.productionPoints.point(%d)", nodeIndex)
+                    local storedFactoryId = getXMLString(xmlFile, nodePath .. ".factoryId")
 
-                -- Se non esistono, inizializza a 0
-                if maintenanceMonths == nil then
-                    print("FactoryProductionMenu maintenanceMonths rilevato nil")
-                    maintenanceMonths = 0
+                    if storedFactoryId == nil then
+                        break
+                    end
+
+                    if storedFactoryId == factoryId then
+                        local maintenanceKey = nodePath .. ".maintenanceMonths"
+                        local maintenanceMonths = getXMLInt(xmlFile, maintenanceKey)
+
+                        if maintenanceMonths == nil then
+                            print("FactoryProductionMenu maintenanceMonths rilevato nil")
+                            maintenanceMonths = 0
+                        end
+
+                        maintenanceMonths = maintenanceMonths + 1
+                        setXMLInt(xmlFile, maintenanceKey, maintenanceMonths)
+                        found = true
+                        break
+                    end
+
+                    nodeIndex = nodeIndex + 1
                 end
 
-                -- Incrementa i mesi di manutenzione
-                maintenanceMonths = maintenanceMonths + 1
-
-                -- Salva il nuovo valore nell'XML
-                setXMLInt(xmlFile, maintenanceKey, maintenanceMonths)
+                if not found then
+                    print(string.format("Factory with ID %s not found in XML", factoryId))
+                end
             end
         end
     end
@@ -545,10 +590,13 @@ function FactoryProductionMenu:searchNewFactories()
     local xmlFile = loadXMLFile("FactoryProductionSettings", userSettingsFile)
 
     if xmlFile == nil then
-        --print("Error: Could not load XML file for maintenance data")
+        print("Error: Could not load XML file for maintenance data")
         return
     end
+
+    -- Ottieni i punti di produzione
     local productionPoints = g_currentMission.productionChainManager.productionPoints
+
     -- Itera su ogni punto di produzione
     for _, productionPoint in ipairs(productionPoints) do
         local unloadingStation = productionPoint.unloadingStation
@@ -557,27 +605,42 @@ function FactoryProductionMenu:searchNewFactories()
             local storeItem = owningPlaceable.placeableLoadingData and owningPlaceable.placeableLoadingData.storeItem
             local nameCustom = owningPlaceable.nameCustom
 
-            -- Se non c'è un nome personalizzato, usa il nome dal storeItem
             if nameCustom == nil or nameCustom == "" then
                 nameCustom = storeItem and storeItem.name or "Unknown Factory"
             end
 
-            -- Verifica che la categoria sia "PRODUCTIONPOINTS"
             if storeItem and storeItem.categoryName == "PRODUCTIONPOINTS" then
                 local factoryId = owningPlaceable.uniqueId
-                local factoryName = nameCustom
-
-                -- Crea una chiave unica per questa fabbrica nel file XML
-                local placeableKey = string.format("settings.productionPoints.%s", factoryId)
 
                 -- Verifica se la fabbrica è già presente nell'XML
-                if not hasXMLProperty(xmlFile, placeableKey) then
-                    -- Se non esiste, aggiungiamo i dati per questa fabbrica
-                    --print(string.format("Adding new factory: %s (ID: %s)", factoryName, factoryId))
+                local found = false
+                local nodeIndex = 0
 
-                    -- Aggiungi la fabbrica all'XML con i dati iniziali
-                    setXMLString(xmlFile, string.format("settings.productionPoints.%s.name", factoryId), factoryName)
-                    setXMLInt(xmlFile, string.format("settings.productionPoints.%s.maintenanceMonths", factoryId), 0) -- Inizializza i mesi di manutenzione a 0
+                -- Cerca se il factoryId è già presente nell'XML
+                while true do
+                    local basePath = string.format("settings.productionPoints.point(%d)", nodeIndex)
+                    local existingFactoryId = getXMLString(xmlFile, basePath .. ".factoryId")
+
+                    if existingFactoryId == nil then
+                        break -- se il factoryId non esiste, possiamo fermarci
+                    end
+
+                    if existingFactoryId == factoryId then
+                        found = true
+                        break -- se troviamo un match, non aggiungiamo la fabbrica
+                    end
+
+                    nodeIndex = nodeIndex + 1
+                end
+
+                -- Se la fabbrica non è già presente, aggiungiamola
+                if not found then
+                    local basePath = string.format("settings.productionPoints.point(%d)", nodeIndex)
+                    setXMLString(xmlFile, basePath .. "#id", tostring(nodeIndex + 1))
+                    setXMLString(xmlFile, basePath .. ".name", nameCustom)
+                    setXMLString(xmlFile, basePath .. ".factoryId", factoryId)
+                    setXMLInt(xmlFile, basePath .. ".maintenanceMonths", 0)
+                    print(string.format("Added new factory: %s (ID: %s)", nameCustom, factoryId))
                 end
             end
         end
@@ -591,7 +654,7 @@ end
 function FactoryProductionMenu:savePermanentData()
     local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
     local permanentSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance_final.xml", getUserProfileAppPath())
-    
+
     -- Crea una copia del file temporaneo nel file definitivo
     if fileExists(userSettingsFile) then
         copyFile(userSettingsFile, permanentSettingsFile, true)
@@ -632,7 +695,7 @@ end
 function FactoryProductionMenu:deleteMap()
     -- Rimuovi il riferimento globale quando la mod viene scaricata
     g_factoryProductionMenu = nil
-    
+
     if g_inputBinding then
         g_inputBinding:removeActionEventsByTarget(self)
         print("FactoryProductionMenu: Eventi rimossi durante delete")
@@ -698,5 +761,5 @@ FSBaseMission.onStartMission =
 
 -- Crea una nuova istanza e registra il mod
 local modMenu = FactoryProductionMenu:new()
-g_factoryProductionMenu = modMenu 
+g_factoryProductionMenu = modMenu
 addModEventListener(modMenu)
