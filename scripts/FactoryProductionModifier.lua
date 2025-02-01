@@ -2,14 +2,14 @@
 IncreasedProduction
 Author: 	Kiokoman
 Date: 		25.12.2024
-Version:	1.0.0.0
+Version:	1.1.0.0
 ]]
 
 source(g_currentModDirectory .. "scripts/menu.lua");
 
 FactoryProductionModifier = {}
 FactoryProductionModifier.path = g_currentModDirectory
-
+FactoryProductionModifier.maintenanceApplied = false
 
 
 local ProductionsIds = {
@@ -50,7 +50,7 @@ local ProductionsIds = {
     {id = "cereal_chocolate", name = "production_cereal_chocolate"},
     {id = "raisins", name = "production_raisins"},
     {id = "grapejuice", name = "production_grapejuice"},
-     --    production id="grapePallet" not available in the game yet --
+    --    production id="grapePallet" not available in the game yet --
     {id = "biogas", name = "production_biogas"},
     {id = "biogasLiquidManure", name = "production_biogasLiquidManure"},
     {id = "biogasManure", name = "production_biogasManure"},
@@ -125,7 +125,7 @@ function FactoryProductionModifier.new()
 end
 
 function FactoryProductionModifier:loadConfig()
-    local userSettingsFile = Utils.getFilename("modSettings/FactoryProductionModifier.xml", getUserProfileAppPath())
+    local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionModifier.xml", getUserProfileAppPath())
     if fileExists(userSettingsFile) then
         local xmlFile = loadXMLFile("FactoryProductionSettings", userSettingsFile)
         if xmlFile ~= 0 then
@@ -195,10 +195,10 @@ function FactoryProductionModifier:getCurrentMonth()    -- Verifica se g_current
         end
 
         return month
-    else
-        print("g_currentMission.environment non esiste!")
-        return nil
-    end
+else
+    print("g_currentMission.environment non esiste!")
+    return nil
+end
 end
 
 function FactoryProductionModifier:updateProductionCycles(production)
@@ -268,9 +268,100 @@ function FactoryProductionModifier:updateProductionCycles(production)
     end
 end
 
+function FactoryProductionModifier:applyMaintenanceReduction()
+    -- Ottieni il percorso del file XML di configurazione
+    local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
+
+    -- Carica il file XML con loadXMLFile
+    local xmlData = loadXMLFile("FactoryProductionSettings", userSettingsFile)
+
+    -- Verifica se il file XML è stato caricato correttamente
+    if not xmlData then
+        print("Failed to load XML file: " .. userSettingsFile)
+        return
+    end
+
+    -- Verifica che esista la proprietà settings.productionPoints nell'XML
+    if not hasXMLProperty(xmlData, "settings.productionPoints") then
+        print("No productionPoints found in XML")
+        delete(xmlData)
+        return
+    end
+
+    -- Itera su ogni punto di produzione nell'XML
+    local pointIndex = 0
+    while true do
+        local basePath = string.format("settings.productionPoints.point(%d)", pointIndex)
+        local factoryId = getXMLString(xmlData, basePath .. ".factoryId")
+        local maintenanceMonths = tonumber(getXMLString(xmlData, basePath .. ".maintenanceMonths"))
+
+        -- Se non ci sono più punti di produzione, usciamo dal ciclo
+        if not factoryId then
+            break
+        end
+
+        print(string.format("XML factoryId: %s, Maintenance months: %d", factoryId, maintenanceMonths or 0))
+
+        -- Itera su ogni punto di produzione nel gioco
+        for _, productionPoint in ipairs(g_currentMission.productionChainManager.productionPoints) do
+            -- Verifica che il punto di produzione abbia un "unloadingStation" e un "owningPlaceable"
+            if productionPoint.unloadingStation and productionPoint.unloadingStation.owningPlaceable then
+                -- Recupera l'ID della fabbrica dal punto di produzione (dalla proprietà "owningPlaceable")
+                local productionFactoryId = productionPoint.unloadingStation.owningPlaceable.uniqueId
+                --print(string.format("Checking factoryId (game): %s for production point %d", productionFactoryId, pointIndex))
+
+                -- Confronta il factoryId nel file XML con l'ID del punto di produzione nel gioco
+                if factoryId == productionFactoryId then
+                    --print(string.format("FactoryId match! Applying maintenance reduction for factoryId: %s", productionFactoryId))
+
+                    -- Se ci sono mesi di manutenzione, calcola la riduzione
+                    if maintenanceMonths then
+                        local reductionFactor = math.pow(0.95, maintenanceMonths)  -- Riduzione del 5% per mese, composta
+                        print(string.format("Reduction factor: %.2f", reductionFactor))
+
+                        -- Applica la riduzione alle proprietà se esistono
+                        if productionPoint.activeProductions then
+                            for _, activeProduction in ipairs(productionPoint.activeProductions) do
+                                if activeProduction.cyclesPerMonth then
+                                    activeProduction.cyclesPerMonth = activeProduction.cyclesPerMonth * reductionFactor
+                                    print(string.format("Reduced cyclesPerMonth to: %f for factory %s", activeProduction.cyclesPerMonth, productionFactoryId))
+                                end
+
+                                if activeProduction.cyclesPerHour then
+                                    activeProduction.cyclesPerHour = activeProduction.cyclesPerHour * reductionFactor
+                                    print(string.format("Reduced cyclesPerHour to: %f for factory %s", activeProduction.cyclesPerHour, productionFactoryId))
+                                end
+
+                                if activeProduction.cyclesPerMinute then
+                                    activeProduction.cyclesPerMinute = activeProduction.cyclesPerMinute * reductionFactor
+                                    print(string.format("Reduced cyclesPerMinute to: %f for factory %s", activeProduction.cyclesPerMinute, productionFactoryId))
+                                end
+                            end
+                        else
+                            print("No active productions found for this factory.")
+                        end
+                    else
+                        print("No maintenance months found for this factory in the XML.")
+                    end
+                    break -- Esci dal ciclo non appena troviamo una corrispondenza
+                else
+                --print(string.format("FactoryId mismatch: %s (game) != %s (XML) for production point %d", productionFactoryId, factoryId, pointIndex))
+                end
+            end
+        end
+
+        pointIndex = pointIndex + 1
+    end
+
+    -- Libera la memoria
+    delete(xmlData)
+end
+
+
 function FactoryProductionModifier:reset()
     self.SETTINGS.originalValues = {}
     self.isLoaded = false
+    self.maintenanceApplied = false
 end
 
 function FactoryProductionModifier:load(mission)
@@ -331,6 +422,15 @@ function FactoryProductionModifier:load(mission)
     if success then
         print(string.format("FactoryProductionModifier: Successfully processed %d productions", result))
         self.isLoaded = true
+
+        -- Apply maintenance reduction only if it hasn't been applied yet
+        if not self.maintenanceApplied and currentMonth ~= 8 and currentMonth ~= 12 then
+            print("FactoryProductionModifier: Applying maintenance reduction")
+            self:applyMaintenanceReduction()
+            self.maintenanceApplied = true
+        else
+            print("FactoryProductionModifier: Maintenance reduction already applied, skipping")
+        end
     else
         print("FactoryProductionModifier Error: " .. tostring(result))
     end
@@ -379,6 +479,8 @@ function FactoryProductionModifier:update(dt)
     if currentMonth ~= self.lastCheckedMonth then
         print(string.format("FactoryProductionModifier - Month changed from %d to %d", self.lastCheckedMonth, currentMonth))
         self.lastCheckedMonth = currentMonth
+        -- Reset maintenance applied flag when month changes
+        self.maintenanceApplied = false
 
         -- Ricarica tutte le produzioni con i nuovi valori
         if g_currentMission and g_currentMission.productionChainManager then
@@ -393,12 +495,72 @@ function FactoryProductionModifier:update(dt)
                         end
                     end
                 end
+                -- Apply maintenance reduction after all cycles are updated
+                if not self.maintenanceApplied and currentMonth ~= 8 and currentMonth ~= 12 then
+                    print("FactoryProductionModifier: Applying maintenance reduction after month change")
+                    self:applyMaintenanceReduction()
+                    self.maintenanceApplied = true
+                end
             end
-	FactoryProductionMenu:incrementMaintenanceMonths()
-	end
+            FactoryProductionMenu:incrementMaintenanceMonths()
+            FactoryProductionModifier:resetMaintenanceMonths()
+        end
     end
 end
 
+function FactoryProductionModifier:resetMaintenanceMonths()
+    -- Ottieni il mese corrente
+    local currentMonth = FactoryProductionModifier:getCurrentMonth()
+
+    -- Se siamo in agosto (8) o dicembre (12)
+    if currentMonth == 8 or currentMonth == 12 then
+        -- Ottieni il percorso del file XML di configurazione
+        local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionMaintenance.xml", getUserProfileAppPath())
+
+        -- Carica il file XML con loadXMLFile
+        local xmlData = loadXMLFile("FactoryProductionSettings", userSettingsFile)
+
+        -- Verifica se il file XML è stato caricato correttamente
+        if not xmlData then
+            print("Failed to load XML file: " .. userSettingsFile)
+            return
+        end
+
+        -- Verifica che esista la proprietà settings.productionPoints nell'XML
+        if not hasXMLProperty(xmlData, "settings.productionPoints") then
+            print("No productionPoints found in XML")
+            delete(xmlData)
+            return
+        end
+
+        -- Itera attraverso ogni punto di produzione nell'XML
+        local pointIndex = 0
+        while true do
+            local basePath = string.format("settings.productionPoints.point(%d)", pointIndex)
+            local currentFactoryId = getXMLString(xmlData, basePath .. ".factoryId")
+
+            if currentFactoryId == nil then
+                break  -- Se non ci sono più punti di produzione, fermati
+            end
+
+            -- Trova il campo maintenanceMonths e resettalo a 0
+            local maintenanceKey = basePath .. ".maintenanceMonths"
+            setXMLInt(xmlData, maintenanceKey, 0)
+
+            print(string.format("Resetting maintenanceMonths for factoryId: %s", currentFactoryId))
+
+            pointIndex = pointIndex + 1
+        end
+
+        -- Salva il file XML con i cambiamenti
+        saveXMLFile(xmlData)
+
+        -- Libera la memoria
+        delete(xmlData)
+    else
+        print("Current month is not August or December. No reset needed.")
+    end
+end
 
 function FactoryProductionModifier:onSettingsChanged()
     self.isLoaded = false
@@ -623,7 +785,14 @@ function FactoryProductionModifier:onMenuOptionChanged(state, id)
 end
 
 function FactoryProductionModifier:saveConfig()
-    local userSettingsFile = Utils.getFilename("modSettings/FactoryProductionModifier.xml", getUserProfileAppPath())
+    local folderPath = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier", getUserProfileAppPath())
+    if not fileExists(folderPath) then
+        createFolder(folderPath)
+        print("La cartella FS25_FactoryProductionMultiplier è stata creata con successo.")
+    else
+        print("La cartella FS25_FactoryProductionMultiplier esiste già.")
+    end
+    local userSettingsFile = Utils.getFilename("modSettings/FS25_FactoryProductionMultiplier/FactoryProductionModifier.xml", getUserProfileAppPath())
     print(string.format("Saving config to: %s", userSettingsFile))
 
     local xmlFile = createXMLFile("FactoryProductionSettings", userSettingsFile, "factoryProduction")
@@ -661,14 +830,15 @@ local modEnvironment = FactoryProductionModifier.new()
 
 modEnvironment:loadConfig()
 
-FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, function() 
+FSBaseMission.onStartMission = Utils.appendedFunction(FSBaseMission.onStartMission, function()
+    FactoryProductionMenu:initializeXML()
     g_currentMission:addUpdateable(modEnvironment)
-    end
+end
 )
 
-Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, function(mission) 
+Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, function(mission)
     modEnvironment:onLoadGame(mission)
-    end
+end
 )
 -- Quando viene caricata una nuova partita
 Mission00.delete = Utils.appendedFunction(Mission00.delete, function()
