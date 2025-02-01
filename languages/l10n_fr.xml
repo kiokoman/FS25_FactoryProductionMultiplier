@@ -6,7 +6,10 @@
 	      <text name="factoryProduction_multiplier" text="Multiplicateur de production"/>
 	      <text name="factoryProduction_prod" text="Liste de production"/>
 	      <text name="production_tooltip" text="Activer/Désactiver le multiplicateur pour"/>
-
+	      <text name="input_FACTORYPRODUCTION_MENU" text="Menu de Maintenance des Usines"/>
+	      <text name="menu_FACTORYPRODUCTION_MENU" text="Menu de Maintenance des Usines"/>
+	      <text name="maintenance_info" text="Dernière maintenance : il y a %d mois, Coût de la réparation : %d"/>
+	    
 	  <!-- Production Names -->
         <text name="production_cheese" text="Fromage"/>
         <text name="production_butter_buffaloMilk" text="Beurre de buffle"/>
